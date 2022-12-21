@@ -6,7 +6,7 @@ ARG PATH="/root/miniconda3/bin:${PATH}"
 WORKDIR /root
 
 RUN apt-get update \
-    && apt-get install -y wget git \
+    && apt-get install -y wget git unzip \
     && rm -rf /var/lib/apt/lists/* \
     && wget \
       https://repo.anaconda.com/miniconda/Miniconda3-latest-Linux-x86_64.sh \
@@ -19,5 +19,4 @@ RUN git clone https://github.com/jaded0/sign-translation.git
 
 COPY WLASL2000.zip WLASL2000.zip
 
-RUN apt-get install -y unzip \
-    && unzip -q WLASL2000.zip 
+RUN unzip -q WLASL2000.zip 
