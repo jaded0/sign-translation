@@ -19,5 +19,5 @@ RUN git clone https://github.com/jaded0/sign-translation.git
 
 COPY WLASL2000.zip WLASL2000.zip
 
-RUN sudo apt-get install -y unzip \
+RUN apt-get install -y unzip \
     && unzip -q WLASL2000.zip 
