@@ -96,7 +96,7 @@ def make_dataset(split_file, split, root, mode, num_classes):
     with open(split_file, 'r') as f:
         data = json.load(f)
         
-    fileName=open("/notebooks/wlasl_class_list.txt")
+    fileName=open("./wlasl_class_list.txt")
     lines = [i.split('\t')[1].strip() for i in fileName.readlines()]
     encoded_text = t5_encode_text(lines)
 
