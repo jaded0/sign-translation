@@ -1,9 +1,0 @@
-name: sign_env
-dependencies:
-  - python=3.9
-  - pip
-  pip:
-    - torch
-    - torchvision
-    - imagen-pytorch
-    - yagmail[all]

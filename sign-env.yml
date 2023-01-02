@@ -1,0 +1,19 @@
+name: sign-env                                                                   
+channels:                                                                        
+  - nvidia                                                                       
+  - pytorch                                                                      
+  - conda-forge                                                                  
+dependencies:                                                                    
+  - protobuf==3.14.0                                                             
+  - pytorch==1.12.1                                                              
+  - cudatoolkit                                                                  
+  - torchvision==0.13.1                                                          
+  - torchaudio==0.12.1                                                           
+  - jupyter                                                                      
+  - pip                                                                          
+  - numpy                                                                        
+  - tensorboard                                                                  
+  - pip:                                                                         
+    - yagmail[all]                                                               
+    - imagen-pytorch                                                             
+    - opencv-python-headless   
