@@ -28,4 +28,10 @@ RUN . /root/.bashrc \
                                                                                  
 COPY WLASL2000.zip WLASL2000.zip                                                 
                                                                                  
-RUN unzip -q -d sign-translation/ WLASL2000.zip       
+RUN unzip -q -d sign-translation/ WLASL2000.zip \
+    && rm -f WLASL2000.zip \
+    && cd sign-translation \
+    && . /root/.bashrc \                                                            
+    && mamba activate sign-env \ 
+    && jupyter nbconvert --to python signgen.ipynb \
+    && python signgen.py
