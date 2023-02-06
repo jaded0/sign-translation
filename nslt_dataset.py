@@ -1,3 +1,5 @@
+import torchvision.transforms as T
+
 import json
 import math
 import os
@@ -33,16 +35,16 @@ def load_rgb_frames(image_dir, vid, start, num):
         except:
             print(os.path.join(image_dir, vid, str(i).zfill(6) + '.jpg'))
         w, h, c = img.shape
-        if w < 226 or h < 226:
-            d = 226. - min(w, h)
+        if w < 512 or h < 512:
+            d = 512. - min(w, h)
             sc = 1 + d / min(w, h)
             img = cv2.resize(img, dsize=(0, 0), fx=sc, fy=sc)
-        img = (img / 255.) * 2 - 1
+        img = (img / 511.) * 2 - 1
         frames.append(img)
     return np.asarray(frames, dtype=np.float32)
 
 
-def load_rgb_frames_from_video(vid_root, vid, start, num, resize=(256, 256)):
+def load_rgb_frames_from_video(vid_root, vid, start, num, resize=(512,512)):
     video_path = os.path.join(vid_root, vid + '.mp4')
 
     vidcap = cv2.VideoCapture(video_path)
@@ -56,15 +58,15 @@ def load_rgb_frames_from_video(vid_root, vid, start, num, resize=(256, 256)):
         success, img = vidcap.read()
 
         w, h, c = img.shape
-        if w < 226 or h < 226:
-            d = 226. - min(w, h)
+        if w < 512 or h < 512:
+            d = 512. - min(w, h)
             sc = 1 + d / min(w, h)
             img = cv2.resize(img, dsize=(0, 0), fx=sc, fy=sc)
 
-        if w > 256 or h > 256:
-            img = cv2.resize(img, (math.ceil(w * (256 / w)), math.ceil(h * (256 / h))))
+        if w > 512 or h > 512:
+            img = cv2.resize(img, (math.ceil(w * (512 / w)), math.ceil(h * (512 / h))))
 
-        img = (img / 255.) * 2 - 1
+        img = (img / 511.) * 2 - 1
 
         frames.append(img)
 
@@ -84,8 +86,8 @@ def load_flow_frames(image_dir, vid, start, num):
             imgx = cv2.resize(imgx, dsize=(0, 0), fx=sc, fy=sc)
             imgy = cv2.resize(imgy, dsize=(0, 0), fx=sc, fy=sc)
 
-        imgx = (imgx / 255.) * 2 - 1
-        imgy = (imgy / 255.) * 2 - 1
+        imgx = (imgx / 511.) * 2 - 1
+        imgy = (imgy / 511.) * 2 - 1
         img = np.asarray([imgx, imgy]).transpose([1, 2, 0])
         frames.append(img)
     return np.asarray(frames, dtype=np.float32)
@@ -139,7 +141,7 @@ def make_dataset(split_file, split, root, mode, num_classes):
         # lines = [i.split('\t')[1].strip() for i in fileName.readlines()]
         
         class_ = data[vid]['action'][0]
-        label = encoded_text[class_]
+        label = lines[class_]
 
         if len(vid) == 5:
             dataset.append((vid, label, src, 0, data[vid]['action'][2] - data[vid]['action'][1]))
@@ -185,7 +187,7 @@ class NSLT(data_utl.Dataset):
         """
         vid, label, src, start_frame, nf = self.data[index]
 
-        total_frames = 64
+        total_frames = 1
 
         try:
             start_f = random.randint(0, nf - total_frames - 1) + start_frame
@@ -196,15 +198,17 @@ class NSLT(data_utl.Dataset):
 
         imgs, label = self.pad(imgs, label, total_frames)
 
-        if self.transforms: 
-            imgs = self.transforms(imgs)
-
+        ret_img = video_to_tensor(imgs).swapdims(0,1)[0]
+        # print(ret_img.size())
+        imgs = T.ToPILImage()(ret_img)
         # ret_lab = torch.from_numpy(label)
-        ret_lab = label
-        ret_img = video_to_tensor(imgs)
+        ret_lab = f"sign language for: {label}"
 
         # return ret_img, ret_lab, vid
-        return ret_img, ret_lab
+        ret_dict = {"pixel_values": imgs, "input_ids": [ret_lab]}
+        if self.transforms: 
+            ret_dict = self.transforms(ret_dict)
+        return ret_dict
 
     def __len__(self):
         return len(self.data)
@@ -255,4 +259,3 @@ class NSLT(data_utl.Dataset):
         # label = np.tile(label, (total_frames, 1)).transpose((1, 0))
 
         return padded_imgs, label
-
