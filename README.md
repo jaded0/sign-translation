@@ -5,7 +5,7 @@ ssh username@ssh.rc.byu.edu
 and then run:
 
 ```bash
-git clone https://github.com/wingated/cs674-dreambooth.git
+git clone -b stable_signs https://github.com/jaded0/sign-translation.git 
 
 module load charliecloud/0.26
 cd cs674-dreambooth/
