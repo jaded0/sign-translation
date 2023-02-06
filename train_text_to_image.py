@@ -40,6 +40,12 @@ logger = get_logger(__name__, log_level="INFO")
 def parse_args():
     parser = argparse.ArgumentParser(description="Simple example of a training script.")
     parser.add_argument(
+        "--local_files_only",
+        default=False,
+        action="store_true",
+        help="Whether to use internet access to download pretrained models and datasets.",
+    )
+    parser.add_argument(
         "--pretrained_model_name_or_path",
         type=str,
         default=None,
@@ -791,6 +797,7 @@ def main():
             vae=vae,
             unet=unet,
             revision=args.revision,
+            local_files_only=args.local_files_only,
         )
         pipeline.save_pretrained(args.output_dir)
 

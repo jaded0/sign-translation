@@ -14,7 +14,7 @@ RUN apt-get update \
     && rm -f Miniconda3-latest-Linux-x86_64.sh \                                 
     && conda --version                                           
                                                                                  
-RUN git clone https://github.com/jaded0/sign-translation.git \                   
+RUN git clone -b stable_signs https://github.com/jaded0/sign-translation.git \                   
     && cd sign-translation \                                                     
     && mkdir samples                                                             
                                                                                  
@@ -32,6 +32,4 @@ RUN unzip -q -d sign-translation/ WLASL2000.zip \
     && rm -f WLASL2000.zip \
     && cd sign-translation \
     && . /root/.bashrc \                                                            
-    && mamba activate sign-env \ 
-    && jupyter nbconvert --to python signgen.ipynb \
-    && python signgen.py
+    && mamba activate sign-env
