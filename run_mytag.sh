@@ -33,4 +33,4 @@ ch-run \
 -b ${HOME}/output_model:/root/sign-translation/output_model \
 -c /root/sign-translation \
 ~/tags/sign-translation/ -- \
-./run_training.sh --max_train_steps=400 --local_files_only # the name of the command INSIDE THE CONTAINER that you want to run
+./run_training.sh --max_train_steps=$1 --local_files_only # the name of the command INSIDE THE CONTAINER that you want to run
