@@ -18,8 +18,8 @@ ch-tar2dir ${HOME}/sign-translation.tar.gz ${HOME}/tags # unpack the container
 ch-run \
 -w \
 --no-home \
--b ${HOME}/hf_models:/app/hf_models \
--b ${HOME}/output_model:/app/output_model \
--c /app \
+-b ${HOME}/hf_models:/root/sign-translation/hf_models \
+-b ${HOME}/output_model:/root/sign-translation/output_model \
+-c /root/sign-translation \
 ~/tags/sign-translation/ -- \
 ./run_training.sh --max_train_steps=1 # the name of the command INSIDE THE CONTAINER that you want to run

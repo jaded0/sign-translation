@@ -11,9 +11,8 @@ export OUTPUT_DIR="./output_model"
 
 export HF_HOME="./hf_models"
 
-/opt/conda/bin/accelerate launch train_text_to_image.py \
+/miniconda3/envs/sign-env/bin/accelerate launch train_text_to_image.py \
   --pretrained_model_name_or_path=$MODEL_NAME  \
-  --instance_data_dir=$INSTANCE_DIR \
   --output_dir=$OUTPUT_DIR \
   --train_batch_size=1 \
   --gradient_accumulation_steps=1 \

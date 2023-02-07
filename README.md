@@ -10,7 +10,7 @@ git clone -b stable_signs https://github.com/jaded0/sign-translation.git
 module load charliecloud/0.26
 cd cs674-dreambooth/
 ch-image build --force -t sign-translation .
-ch-builder2tar mytag ${HOME}
+ch-builder2tar sign-translation ${HOME}
 mkdir ${HOME}/output_model
 mkdir ${HOME}/hf_models
 mkdir ${HOME}/tags

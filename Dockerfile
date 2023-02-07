@@ -1,9 +1,9 @@
 FROM nvidia/cuda:11.2.1-cudnn8-devel-ubuntu20.04         
                                                                                  
 ENV PATH="/root/miniconda3/bin:${PATH}"                                          
-ARG PATH="/root/miniconda3/bin:${PATH}"                                          
-WORKDIR /root                                                                    
-                                                                                 
+ARG PATH="/root/miniconda3/bin:${PATH}"
+WORKDIR /root
+
 RUN apt-get update \                                                             
     && apt-get install -y wget git unzip libgl1 vim \                            
     && rm -rf /var/lib/apt/lists/* \                                             
@@ -14,7 +14,7 @@ RUN apt-get update \
     && rm -f Miniconda3-latest-Linux-x86_64.sh \    
     && export PATH="/root/miniconda3/bin:${PATH}"
                                                                                  
-RUN git clone -b stable_signs https://github.com/jaded0/sign-translation.git \                   
+RUN git clone -b stable_signs https://github.com/jaded0/sign-translation.git \ 
     && cd sign-translation \                                                     
     && mkdir samples
                                                                                                                                                                   
