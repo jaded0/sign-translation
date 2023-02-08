@@ -14,7 +14,8 @@ dependencies:
   - numpy                                                                        
   - tensorboard           
   - accelerate      
-  - diffusers                                                 
+  - diffusers                                  
+  - wandb               
   - pip:                                                                         
     - imagen-pytorch                                                             
     - opencv-python-headless   

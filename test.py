@@ -8,8 +8,11 @@
 import wandb
 import os
 import time
+import inference
 
 # print(os.environ['STEPS'])
+# If you don't want your script to sync to the cloud
+os.environ['WANDB_MODE'] = 'offline'
 
 wandb.init(project="test-project", entity="jadens_team")
 
@@ -21,8 +24,11 @@ infer_steps = 30
 for s in [10, 20, 30, 40, 50, 60, 70, 80, 90, 100]:
     infer_steps = s
     for x in range(0, 4):
-        os.system("""sbatch --output ./output_results.txt --mail-user jaden.lorenc@gmail.com --job-name "dreambooth test" getresults.sh """ + str(infer_steps))
-        time.sleep(120)
+        # train_text_to_image.main()
+        # os.system("""/miniconda3/envs/sign-env/bin/accelerate launch inference.py --num_inference_steps """ + str(infer_steps))
+        
+        inference.main(["--num_inference_steps", str(infer_steps)])
+
         wandb.config = {
         "train_steps": train_steps,
         "batch_size": 16,
