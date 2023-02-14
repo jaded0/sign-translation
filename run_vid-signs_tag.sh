@@ -31,5 +31,5 @@ ch-run \
 --no-home \
 -b ${HOME}/samples:/root/sign-translation/samples \
 -c /root/sign-translation \
-~/tags/sign-translation/ -- \
-./run_training.sh
+~/tags/vid-signs/ -- \
+./training.sh

@@ -13,5 +13,6 @@ ch-image build --force -t vid-signs .
 ch-builder2tar vid-signs ${HOME}
 mkdir ${HOME}/samples
 mkdir ${HOME}/tags
+ch-tar2dir ${HOME}/vid-signs.tar.gz ${HOME}/tags # unpack the container
 sbatch --output ./output_results.txt --mail-user YOUR_EMAIL_HERE --job-name "vid-signs" run_vid-signs_tag.sh
 ```
