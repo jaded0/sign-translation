@@ -12,8 +12,10 @@ dependencies:
   - jupyter                                                                      
   - pip                                                                          
   - numpy                                                                        
-  - tensorboard                                                                  
+  - tensorboard           
+  - accelerate      
+  - diffusers                                  
+  - wandb               
   - pip:                                                                         
-    - yagmail[all]                                                               
     - imagen-pytorch                                                             
     - opencv-python-headless   

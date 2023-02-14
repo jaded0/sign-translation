@@ -1,9 +1,9 @@
-FROM --platform=linux/x86_64 nvidia/cuda:11.2.1-cudnn8-devel-ubuntu20.04         
+FROM nvidia/cuda:11.2.1-cudnn8-devel-ubuntu20.04         
                                                                                  
 ENV PATH="/root/miniconda3/bin:${PATH}"                                          
-ARG PATH="/root/miniconda3/bin:${PATH}"                                          
-WORKDIR /root                                                                    
-                                                                                 
+ARG PATH="/root/miniconda3/bin:${PATH}"
+WORKDIR /root
+
 RUN apt-get update \                                                             
     && apt-get install -y wget git unzip libgl1 vim \                            
     && rm -rf /var/lib/apt/lists/* \                                             
@@ -11,26 +11,30 @@ RUN apt-get update \
       https://repo.anaconda.com/miniconda/Miniconda3-latest-Linux-x86_64.sh \       
     && mkdir /root/.conda \                                                      
     && bash Miniconda3-latest-Linux-x86_64.sh -b \                               
-    && rm -f Miniconda3-latest-Linux-x86_64.sh \                                 
-    && conda --version                                           
+    && rm -f Miniconda3-latest-Linux-x86_64.sh \    
+    && export PATH="/root/miniconda3/bin:${PATH}"
                                                                                  
-RUN git clone https://github.com/jaded0/sign-translation.git \                   
+RUN git clone -b vid-signs https://github.com/jaded0/sign-translation.git \ 
     && cd sign-translation \                                                     
-    && mkdir samples                                                             
-                                                                                 
-COPY sign-env.yml sign-env.yml                                                   
-                                                                                 
-RUN conda install -y mamba -n base -c conda-forge                                
-RUN mamba init bash                                                              
-RUN mamba env create -f sign-env.yml                                             
-RUN . /root/.bashrc \                                                            
-    && mamba activate sign-env                                                   
+    && mkdir samples
+                                                                                                                                                                  
+RUN export PATH="/miniconda3/envs/base/bin:/miniconda3/bin:${PATH}" \
+    && cd sign-translation \
+    && conda install -y mamba -n base -c conda-forge \
+    && mamba env create -f sign-env.yml 
                                                                                  
 COPY WLASL2000.zip WLASL2000.zip                                                 
+
+RUN export PATH="/miniconda3/envs/base/bin:/miniconda3/bin:${PATH}" \
+    && mamba init bash                                
                                                                                  
-RUN unzip -q -d sign-translation/ WLASL2000.zip \
+RUN export PATH="/miniconda3/envs/base/bin:/miniconda3/bin:${PATH}" \
+    && . /root/.bashrc \  
+    && mamba activate sign-env \
+    && unzip -q -d sign-translation/ WLASL2000.zip \
     && rm -f WLASL2000.zip \
     && cd sign-translation \
+    && mkdir samples \
     && . /root/.bashrc \                                                            
     && mamba activate sign-env \ 
     && jupyter nbconvert --to python signgen.ipynb \
