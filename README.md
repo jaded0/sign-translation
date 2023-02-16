@@ -16,3 +16,9 @@ mkdir ${HOME}/tags
 ch-tar2dir ${HOME}/vid-signs.tar.gz ${HOME}/tags # unpack the container
 sbatch --output ./output_results.txt --mail-user YOUR_EMAIL_HERE --job-name "vid-signs" run_vid-signs_tag.sh
 ```
+
+
+to loop the wandb sync:
+```bash
+while true; do wandb sync --sync-all; sleep $((60 * 5)); done
+```

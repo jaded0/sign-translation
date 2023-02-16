@@ -26,6 +26,15 @@ def video_to_tensor(pic):
 
 
 def load_rgb_frames(image_dir, vid, start, num):
+    """load rgb frames from image directory
+    Args: 
+        image_dir: directory of images
+        vid: video name
+        start: start frame index
+        num: number of frames to load
+    Returns:
+        frames: loaded frames
+    """
     frames = []
     for i in range(start, start + num):
         try:
@@ -43,6 +52,16 @@ def load_rgb_frames(image_dir, vid, start, num):
 
 
 def load_rgb_frames_from_video(vid_root, vid, start, num, resize=(256, 256)):
+    """load rgb frames from video directory
+    Args:
+        vid_root: directory of videos
+        vid: video name
+        start: start frame index
+        num: number of frames to load
+        resize: resize the image to (width, height)
+    Returns:
+        frames: loaded frames
+    """
     video_path = os.path.join(vid_root, vid + '.mp4')
 
     vidcap = cv2.VideoCapture(video_path)
@@ -72,6 +91,15 @@ def load_rgb_frames_from_video(vid_root, vid, start, num, resize=(256, 256)):
 
 
 def load_flow_frames(image_dir, vid, start, num):
+    """load flow frames from image directory
+    Args:
+        image_dir: directory of images
+        vid: video name
+        start: start frame index
+        num: number of frames to load
+    Returns:
+        frames: loaded frames
+    """
     frames = []
     for i in range(start, start + num):
         imgx = cv2.imread(os.path.join(image_dir, vid, vid + '-' + str(i).zfill(6) + 'x.jpg'), cv2.IMREAD_GRAYSCALE)
@@ -92,6 +120,16 @@ def load_flow_frames(image_dir, vid, start, num):
 
 
 def make_dataset(split_file, split, root, mode, num_classes):
+    """make dataset
+    Args:
+        split_file: path to split file
+        split: train or test
+        root: path to data root
+        mode: rgb or flow
+        num_classes: number of classes
+    Returns:
+        dataset: list of (video_name, label, source, start_frame, num_frames)
+    """
     dataset = []
     with open(split_file, 'r') as f:
         data = json.load(f)
@@ -153,6 +191,12 @@ def make_dataset(split_file, split, root, mode, num_classes):
 
 
 def get_num_class(split_file):
+    """get number of classes
+    Args:
+        split_file: path to split file
+    Returns:
+        num_classes: number of classes
+    """
     classes = set()
 
     content = json.load(open(split_file))
@@ -167,6 +211,15 @@ def get_num_class(split_file):
 class NSLT(data_utl.Dataset):
 
     def __init__(self, split_file, split, root, mode, transforms=None):
+        """
+        Args:
+            split_file: path to split file
+            split: train or test
+            root: path to data root
+            mode: rgb or flow
+            transforms: image transforms
+        """
+
         self.num_classes = get_num_class(split_file)
 
         self.data = make_dataset(split_file, split, root, mode, num_classes=self.num_classes)
@@ -210,6 +263,15 @@ class NSLT(data_utl.Dataset):
         return len(self.data)
 
     def pad(self, imgs, label, total_frames):
+        """pads the input imgs by replicating the first or the last frame, 
+        depending on the result of a random coin toss.
+        Args:
+            imgs: images
+            label: label
+            total_frames: total frames
+        Returns:
+            padded images and label
+        """
         if imgs.shape[0] < total_frames:
             num_padding = total_frames - imgs.shape[0]
 
@@ -233,6 +295,17 @@ class NSLT(data_utl.Dataset):
 
     @staticmethod
     def pad_wrap(imgs, label, total_frames):
+        """replicates a subset of the input frames to pad the sequence. 
+        If the number of frames to pad is greater than the number of 
+        frames in the input imgs, then the function replicates the 
+        input frames multiple times until it has the required number of frames.
+        Args:
+            imgs: images
+            label: label
+            total_frames: total frames
+        Returns:
+            padded images and label
+        """
         if imgs.shape[0] < total_frames:
             num_padding = total_frames - imgs.shape[0]
 

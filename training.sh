@@ -1,3 +1,3 @@
 #!/bin/bash
 
-/miniconda3/envs/sign-env/bin/accelerate launch signgen.py
+/root/miniconda3/envs/sign-env/bin/accelerate launch --mixed_precision=fp16 --multi_gpu --num_processes=5 signgen.py
