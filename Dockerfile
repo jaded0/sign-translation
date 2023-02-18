@@ -36,5 +36,4 @@ RUN export PATH="/miniconda3/envs/base/bin:/miniconda3/bin:${PATH}" \
     && rm -f WLASL2000.zip \
     && cd sign-translation \
     && . /root/.bashrc \                                                            
-    && mamba activate sign-env \ 
-    && jupyter nbconvert --to python signgen.ipynb
+    && mamba activate sign-env 

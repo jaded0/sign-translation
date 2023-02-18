@@ -210,7 +210,7 @@ def get_num_class(split_file):
 
 class NSLT(data_utl.Dataset):
 
-    def __init__(self, split_file, split, root, mode, transforms=None):
+    def __init__(self, split_file, split, root, mode, transforms=None, num_frames=64):
         """
         Args:
             split_file: path to split file
@@ -227,6 +227,7 @@ class NSLT(data_utl.Dataset):
         self.transforms = transforms
         self.mode = mode
         self.root = root
+        self.num_frames = num_frames
 
     def __getitem__(self, index):
         """
@@ -238,7 +239,7 @@ class NSLT(data_utl.Dataset):
         """
         vid, label, src, start_frame, nf = self.data[index]
 
-        total_frames = 64
+        total_frames = self.num_frames
 
         try:
             start_f = random.randint(0, nf - total_frames - 1) + start_frame
