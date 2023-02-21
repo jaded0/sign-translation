@@ -4,12 +4,6 @@
 # In[1]:
 
 
-# !pip install -q torch==1.12.1+cu116 torchvision==0.13.1+cu116 torchaudio==0.12.1 --extra-index-url https://download.pytorch.org/whl/cu116
-# !pip install -q imagen-pytorch==1.17.0
-# !pip install -q yagmail[all]
-# !pip uninstall -q lxml
-# !pip install -q lxml
-
 import torch
 from imagen_pytorch import Unet3D, ElucidatedImagen, ImagenTrainer
 from nslt_dataset import NSLT
@@ -25,25 +19,26 @@ import numpy as np
 # In[ ]:
 
 os.environ['WANDB_MODE'] = 'offline'
-wandb.init(project="vid-signs", entity="jadens_team")
 
 
 # In[2]:
-
+num_frames = 64
 
 # send_email('./samples/', ['sample-22_book.gif'], 'yeaaah')
 mode = 'rgb'
 root = {'word': './WLASL2000/'}
 
-dataset = NSLT('./preprocess/nslt_100.json', 'train', root=root, mode='rgb', transforms=None, num_frames=64)
-val_dataset = NSLT('./preprocess/nslt_100.json', 'test', root=root, mode='rgb', transforms=None, num_frames=64)
+dataset = NSLT('./preprocess/nslt_100.json', 'train', root=root, mode='rgb', transforms=None, num_frames=num_frames)
+val_dataset = NSLT('./preprocess/nslt_100.json', 'test', root=root, mode='rgb', transforms=None, num_frames=num_frames)
 
 
 # In[3]:
 
 
 unet1_dim = 128
-unet2_dim = 128
+unet2_dim = 256
+downsample_factor = 8
+
 unet1 = Unet3D(
     dim = unet1_dim, 
     dim_mults = (1, 2, 4, 8),
@@ -64,7 +59,7 @@ imagen = ElucidatedImagen(
     unets = (unet1, unet2),
     image_sizes = (16, 32),
     random_crop_sizes = (None, 8),
-    temporal_downsample_factor = (8, 1),        # in this example, the first unet would receive the video temporally downsampled by 2x
+    temporal_downsample_factor = (downsample_factor, 1),        # in this example, the first unet would receive the video temporally downsampled by 2x
     num_sample_steps = 10,
     cond_drop_prob = 0.1,
     sigma_min = 0.002,                          # min noise level
@@ -117,10 +112,11 @@ trainer.add_valid_dataset(val_dataset, batch_size=batch_size)
 
 texts = [
     'book',
-    'deaf',
-    'fine',
+    'all',
     'yes',
-    'cool',
+    'no',
+    'birthday',
+    'woman',
 ]
 # trainer.save(f'./checkpoint{1}.pt')
 # trainer.load(f'checkpoint{1}.pt')
@@ -134,34 +130,53 @@ print('done')
 
 unet_training = 1
 train_steps = 100000
-wandb.config = {
-"train_steps": train_steps,
-"batch_size": batch_size,
-"unet1_dim": unet1_dim,
-"unet2_dim": unet2_dim,
-"unet_training": unet_training,
-}
+run_id = None
+if trainer.is_main:
+    config = {
+        "train_steps": train_steps,
+        "batch_size": batch_size,
+        "downsample_factor": downsample_factor,
+        "unet1_dim": unet1_dim,
+        "unet2_dim": unet2_dim,
+        "unet_training": unet_training,
+        "num_frames": num_frames,
+        }
+    wandb.init(project="vid-signs", entity="jadens_team", id=run_id, config=config)
+    run_id = wandb.run.id
+
 def go():
     import os.path
-    fname = f'samples/checkpoint.pt'
-    if (os.path.isfile(fname)): trainer.load(fname)
+    fname = f'samples/{run_id}-checkpoint.pt'
+    if (os.path.isfile(fname)): 
+        trainer.load(fname)
+
     max_batch_size = batch_size
     running_totals = []
     overview = []
-    
+    print(f'running the {run_id} model')
     for i in range(train_steps):
-        loss = trainer.train_step(unet_number = unet_training, max_batch_size = max_batch_size)
+        loss = trainer.train_step(unet_number = unet_training, max_batch_size = max_batch_size, )
+
+        if not (i % 2000) and not i==0:
+            print(f"trying to save a checkpoint, but is main? {trainer.is_main}")
+            trainer.save(f'./{fname}')
+
+        if not trainer.is_main: # is_main makes sure this can run in distributed
+            continue
+        
         running_totals.append(loss)
         wandb.log({"loss": loss})
-        if not (i % 50) and not i==0:
-            print(f'avg_loss: {sum(running_totals[-30:])/30}')
-            wandb.log({"30_loss": sum(running_totals[-30:])/30})
-        if not (i % 100) and not i==0:
+
+        # if not (i % 50) and not i==0:
+        #     print(f'avg_loss: {sum(running_totals[-30:])/30}')
+        #     wandb.log({"30_loss": sum(running_totals[-30:])/30})
+
+        if not (i % 400) and not i==0:
             valid_loss = trainer.valid_step(unet_number = unet_training, max_batch_size = max_batch_size)
-            print(f'valid loss: {valid_loss}, total avg loss: {sum(running_totals[-100:])/100}')
+            print(f'valid loss: {valid_loss}')
             wandb.log({"valid_loss": valid_loss})
 
-        if (not (i % 200)) and (not i==0) and (trainer.is_main): # is_main makes sure this can run in distributed
+        if (not (i % 1000)) and (not i==0): 
             overview_total = sum(running_totals)/len(running_totals)
             print(f'on step {i}, avg loss of last 200 steps: {overview_total}')
             del running_totals[:]
@@ -179,21 +194,17 @@ def go():
 
             print("sampling done sampling")
             for x,img in enumerate(pil_images):
-                img[0].save(f'./samples/sample-{i//200}_{texts[x]}.gif', format='GIF', save_all = True, 
+                img[0].save(f'./samples/sample-{run_id}-{i//200}_{texts[x]}.gif', format='GIF', save_all = True, 
                             append_images = pil_images[x][1:],
                             optimize = False, duration = 200, loop=0,
                             disposal=3,
                            )
-                print("logging on wandb")
-                wandb.log({f"example_{texts[x]}": wandb.Image(f'./samples/sample-{i//200}_{texts[x]}.gif')})
+                print(f"logging image {texts[x]} on wandb")
+                wandb.log({f"example_{texts[x]}": wandb.Image(f'./samples/sample-{run_id}-{i//200}_{texts[x]}.gif')})
             print('finished saving images')
             wandb.log({"avg_loss": overview_total, "step": i})
-        
-        if not (i % 800) and not i==0:
-            print(f"trying to save a checkpoint, but is main? {trainer.is_main}")
-            trainer.save(f'./samples/checkpoint.pt')
 
-    trainer.save(f'./samples/checkpoint.pt')
+    trainer.save(f'.{fname}')
 
 
 go()
