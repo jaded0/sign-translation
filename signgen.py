@@ -130,7 +130,7 @@ print('done')
 
 unet_training = 1
 train_steps = 100000
-run_id = None
+run_id = '19hj6x64'
 ignore_time = False
 if trainer.is_main:
     config = {
@@ -156,7 +156,7 @@ def go():
     overview = []
     print(f'running the {run_id} model')
     for i in range(train_steps):
-        loss = trainer.train_step(unet_number = unet_training, max_batch_size = max_batch_size, )
+        loss = trainer.train_step(unet_number = unet_training, max_batch_size = max_batch_size, ignore_time = ignore_time)
 
         if not (i % 2000) and not i==0:
             print(f"trying to save a checkpoint, but is main? {trainer.is_main}")
