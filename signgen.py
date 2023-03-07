@@ -37,7 +37,7 @@ val_dataset = NSLT('./preprocess/nslt_100.json', 'test', root=root, mode='rgb', 
 
 unet1_dim = 128
 unet2_dim = 256
-downsample_factor = 8
+downsample_factor = 2
 
 unet1 = Unet3D(
     dim = unet1_dim, 
@@ -131,6 +131,7 @@ print('done')
 unet_training = 1
 train_steps = 100000
 run_id = None
+ignore_time = False
 if trainer.is_main:
     config = {
         "train_steps": train_steps,
@@ -172,7 +173,7 @@ def go():
         #     wandb.log({"30_loss": sum(running_totals[-30:])/30})
 
         if not (i % 400) and not i==0:
-            valid_loss = trainer.valid_step(unet_number = unet_training, max_batch_size = max_batch_size)
+            valid_loss = trainer.valid_step(unet_number = unet_training, max_batch_size = max_batch_size, ignore_time = ignore_time)
             print(f'valid loss: {valid_loss}')
             wandb.log({"valid_loss": valid_loss})
 
@@ -181,7 +182,7 @@ def go():
             print(f'on step {i}, avg loss of last 200 steps: {overview_total}')
             del running_totals[:]
             overview.append(overview_total)
-            videos = trainer.sample(texts = texts, video_frames = 8*20, stop_at_unet_number=unet_training)
+            videos = trainer.sample(texts = texts, video_frames = downsample_factor*20, stop_at_unet_number=unet_training)
             # catch the images and animate them.
             pil_images = []
             for x in videos:
