@@ -130,8 +130,8 @@ print('done')
 
 unet_training = 1
 train_steps = 100000
-run_id = '19hj6x64'
-ignore_time = False
+run_id = None
+ignore_time = True
 if trainer.is_main:
     config = {
         "train_steps": train_steps,
@@ -145,9 +145,10 @@ if trainer.is_main:
     wandb.init(project="vid-signs", entity="jadens_team", id=run_id, config=config)
     run_id = wandb.run.id
 
+start_checkpoint_id = run_id
 def go():
     import os.path
-    fname = f'samples/{run_id}-checkpoint.pt'
+    fname = f'samples/{start_checkpoint_id}-checkpoint.pt'
     if (os.path.isfile(fname)): 
         trainer.load(fname)
 
