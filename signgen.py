@@ -141,6 +141,7 @@ if trainer.is_main:
         "unet2_dim": unet2_dim,
         "unet_training": unet_training,
         "num_frames": num_frames,
+        "ignore_time": ignore_time,
         }
     wandb.init(project="vid-signs", entity="jadens_team", id=run_id, config=config)
     run_id = wandb.run.id

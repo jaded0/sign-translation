@@ -24,7 +24,7 @@ module load charliecloud/0.26
 
 # module load cuda
 module load libnvidia-container
-ch-fromhost --nvidia ~/tags/vid-signs/ # mount the container
+ch-fromhost --nvidia /tmp/tags/vid-signs/ # mount the container
 
 # run it!
 ch-run \
@@ -32,5 +32,5 @@ ch-run \
 --no-home \
 -b ${HOME}/samples:/root/sign-translation/samples \
 -c /root/sign-translation \
-~/tags/vid-signs/ -- \
+/tmp/tags/vid-signs/ -- \
 bash ./training.sh
