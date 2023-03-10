@@ -36,4 +36,5 @@ RUN export PATH="/miniconda3/envs/base/bin:/miniconda3/bin:${PATH}" \
     && rm -f WLASL2000.zip \
     && cd sign-translation \
     && . /root/.bashrc \                                                            
-    && mamba activate sign-env 
+    && mamba activate sign-env \
+    && /root/miniconda3/envs/sign-env/bin/accelerate launch --mixed_precision=fp16 setup.py

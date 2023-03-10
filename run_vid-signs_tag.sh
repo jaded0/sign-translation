@@ -21,6 +21,9 @@ set -u
 module load charliecloud/0.26
 
 # ch-tar2dir "~/sign-translation.tar.gz" "~/tags" # unpack the container
+mkdir /tmp/tags
+ch-tar2dir ${HOME}/vid-signs.tar.gz /tmp/tags # unpack the container
+
 
 # module load cuda
 module load libnvidia-container
