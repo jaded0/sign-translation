@@ -35,5 +35,6 @@ ch-run \
 --no-home \
 -b ${HOME}/samples:/root/sign-translation/samples \
 -c /root/sign-translation \
+--set-env=HF_HOME="/root/sign-translation/.cache/huggingface/" \
 /tmp/tags/vid-signs/ -- \
 bash ./training.sh

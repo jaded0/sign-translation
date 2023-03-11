@@ -37,4 +37,6 @@ RUN export PATH="/miniconda3/envs/base/bin:/miniconda3/bin:${PATH}" \
     && cd sign-translation \
     && . /root/.bashrc \                                                            
     && mamba activate sign-env \
+    && mkdir -p /root/sign-translation/.cache/huggingface \
+    && export HF_HOME=/root/sign-translation/.cache/huggingface \
     && /root/miniconda3/envs/sign-env/bin/accelerate launch --mixed_precision=fp16 setup.py
