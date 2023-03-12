@@ -1,5 +1,4 @@
 #!/bin/bash
-export UNIQUE_ID=$(date +%s)
 
 #SBATCH --time=72:00:00   # walltime.  hours:minutes:seconds
 #SBATCH --ntasks=1   # number of processor cores (i.e. tasks)
@@ -11,7 +10,7 @@ export UNIQUE_ID=$(date +%s)
 #SBATCH --mail-type=FAIL
 #SBATCH --qos=cs
 #SBATCH --partition=cs
-#SBATCH --job-name=${UNIQUE_ID}
+#SBATCH --job-name=vid-signs
 
 echo "72 hours of fun, 8 gpus"
 # some helpful debugging options
@@ -21,6 +20,8 @@ set -u
 # LOAD MODULES, INSERT CODE, AND RUN YOUR PROGRAMS HERE
 
 module load charliecloud/0.26
+
+export UNIQUE_ID=$(date +%s)
 
 mkdir /tmp/tags
 ch-tar2dir ${HOME}/vid-signs.tar.gz /tmp/tags # unpack the container
