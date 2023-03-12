@@ -29,7 +29,7 @@ ch-tar2dir ${HOME}/$1.tar.gz /tmp/tags # unpack the container
 
 # module load cuda
 module load libnvidia-container
-mkdir /tmp/tags/vid-signs/$UNIQUE_ID
+mkdir -p /tmp/tags/vid-signs/$UNIQUE_ID
 ch-fromhost --nvidia /tmp/tags/vid-signs/$UNIQUE_ID/ # mount the container
 
 # run it!
