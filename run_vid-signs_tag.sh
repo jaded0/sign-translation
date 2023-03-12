@@ -21,10 +21,10 @@ set -u
 
 module load charliecloud/0.26
 
-export UNIQUE_ID=$(date +%s)
+export UNIQUE_ID=$1
 
 mkdir /tmp/tags
-ch-tar2dir ${HOME}/vid-signs.tar.gz /tmp/tags # unpack the container
+ch-tar2dir ${HOME}/$1.tar.gz /tmp/tags # unpack the container
 
 
 # module load cuda

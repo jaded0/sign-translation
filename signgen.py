@@ -131,7 +131,7 @@ print('done')
 unet_training = 1
 train_steps = 100000
 run_id = None
-ignore_time = True
+ignore_time = False
 if trainer.is_main:
     config = {
         "train_steps": train_steps,
