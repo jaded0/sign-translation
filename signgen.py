@@ -146,7 +146,7 @@ if trainer.is_main:
     wandb.init(project="vid-signs", entity="jadens_team", id=run_id, config=config)
     run_id = wandb.run.id
 
-start_checkpoint_id = run_id
+start_checkpoint_id = '19hj6x64'
 def go():
     import os.path
     fname = f'samples/{start_checkpoint_id}-checkpoint.pt'
