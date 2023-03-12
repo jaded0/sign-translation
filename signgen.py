@@ -131,7 +131,7 @@ print('done')
 unet_training = 1
 train_steps = 100000
 run_id = None
-ignore_time = False
+ignore_time = True
 if trainer.is_main:
     config = {
         "train_steps": train_steps,
@@ -184,7 +184,7 @@ def go():
             print(f'on step {i}, avg loss of last 200 steps: {overview_total}')
             del running_totals[:]
             overview.append(overview_total)
-            videos = trainer.sample(texts = texts, video_frames = downsample_factor*20, stop_at_unet_number=unet_training)
+            videos = trainer.sample(texts = texts, video_frames = downsample_factor*20 if not ignore_time else 1, stop_at_unet_number=unet_training)
             # catch the images and animate them.
             pil_images = []
             for x in videos:
