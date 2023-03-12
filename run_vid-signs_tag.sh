@@ -1,4 +1,5 @@
 #!/bin/bash
+export UNIQUE_ID=$(date +%s)
 
 #SBATCH --time=72:00:00   # walltime.  hours:minutes:seconds
 #SBATCH --ntasks=1   # number of processor cores (i.e. tasks)
@@ -10,6 +11,7 @@
 #SBATCH --mail-type=FAIL
 #SBATCH --qos=cs
 #SBATCH --partition=cs
+#SBATCH --job-name=${UNIQUE_ID}
 
 echo "72 hours of fun, 8 gpus"
 # some helpful debugging options
@@ -18,17 +20,15 @@ set -u
 
 # LOAD MODULES, INSERT CODE, AND RUN YOUR PROGRAMS HERE
 
-export UNIQUE_ID=$(date +%s)
-
 module load charliecloud/0.26
 
-# ch-tar2dir "~/sign-translation.tar.gz" "~/tags" # unpack the container
 mkdir /tmp/tags
 ch-tar2dir ${HOME}/vid-signs.tar.gz /tmp/tags # unpack the container
 
 
 # module load cuda
 module load libnvidia-container
+mkdir /tmp/tags/vid-signs/$UNIQUE_ID
 ch-fromhost --nvidia /tmp/tags/vid-signs/$UNIQUE_ID/ # mount the container
 
 # run it!

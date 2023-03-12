@@ -14,7 +14,7 @@ ch-builder2tar vid-signs ${HOME}
 # mkdir ${HOME}/samples
 # mkdir /tmp/tags
 # ch-tar2dir ${HOME}/vid-signs.tar.gz /tmp/tags # unpack the container
-sbatch --output ./output_results.txt --mail-user jaden.lorenc@gmail.com --job-name "vid-signs" run_vid-signs_tag.sh
+sbatch --output ./output_results3.txt --mail-user jaden.lorenc@gmail.com run_vid-signs_tag.sh
 ```
 
 
