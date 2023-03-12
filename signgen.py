@@ -128,7 +128,7 @@ print('done')
 # In[ ]:
 
 
-unet_training = 1
+unet_training = 2
 train_steps = 100000
 run_id = None
 ignore_time = True

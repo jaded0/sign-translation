@@ -19,6 +19,6 @@ sbatch --output ./output_results.txt --mail-user jaden.lorenc@gmail.com --job-na
 
 
 to loop the wandb sync:
-```bash
-while true; do wandb sync --sync-all; sleep $((60 * 5)); done
+```chrontab
+*/5 * * * * cd /home/jaded79/sign-translation && /home/jaded79/.local/bin/wandb sync --sync-all
 ```

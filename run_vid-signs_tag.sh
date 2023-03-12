@@ -18,6 +18,8 @@ set -u
 
 # LOAD MODULES, INSERT CODE, AND RUN YOUR PROGRAMS HERE
 
+export UNIQUE_ID=$(date +%s)
+
 module load charliecloud/0.26
 
 # ch-tar2dir "~/sign-translation.tar.gz" "~/tags" # unpack the container
@@ -27,14 +29,15 @@ ch-tar2dir ${HOME}/vid-signs.tar.gz /tmp/tags # unpack the container
 
 # module load cuda
 module load libnvidia-container
-ch-fromhost --nvidia /tmp/tags/vid-signs/ # mount the container
+ch-fromhost --nvidia /tmp/tags/vid-signs/$UNIQUE_ID/ # mount the container
 
 # run it!
 ch-run \
 -w \
 --no-home \
 -b ${HOME}/samples:/root/sign-translation/samples \
+-b ${HOME}/sign-translation/wandb:/root/sign-translation/wandb \
 -c /root/sign-translation \
 --set-env=HF_HOME="/root/sign-translation/.cache/huggingface/" \
-/tmp/tags/vid-signs/ -- \
+/tmp/tags/vid-signs/$UNIQUE_ID -- \
 bash ./training.sh
